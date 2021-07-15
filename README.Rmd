@@ -17,31 +17,22 @@ library(brms)
 theme_set(theme_bw())
 ```
 
-## Preparing the simulated data, data dictionary
+## Availability of de-identfied individual patient level data
 
-We create a simulated dataset that has realistic statistical properties (i.e., resemble that of the actual data) to illustrate the later calculations:
+De-identfied individual patient level data are openly available to the public at the homepage of the Kelen Hospital: [Sinopharm](https://kelen.hu/wp-content/uploads/2021/07/sinopharmanonymousdata.xlsx) (450 subjects) and [Pfizer](https://kelen.hu/wp-content/uploads/2021/07/pfizeranonymousdata.xlsx) (45 subjects).
+
+To illustrate the methods, we will use to Sinopharm data. We first read the raw data:
 
 ```{r}
-set.seed(123)
-
-RawData <- data.table(
-  Age = c(runif(100, 30, 90), TruncatedNormal::rtnorm(350, 70, 5, 30, 90))[sample(1:450, 450)],
-  Sex = c(rep("Male", 200), rep("Female", 250))[sample(1:450, 450)],
-  DaysAfterSecondDose = triangle::rtriangle(450, 14, 50, 14)[sample(1:450, 450)]
-)
-
-RawData$Titer <- ifelse(rbinom(450, 1, plogis(-5.5 + 0.05*RawData$Age + 0.04*RawData$DaysAfterSecondDose +
-                                                0.09*(RawData$Sex=="Male")))==1, 0,
-                        rlnorm(450, 3.2 - 0.01*RawData$Age - 0.02*RawData$DaysAfterSecondDose -
-                                 0.2*(RawData$Sex=="Male"), 1.1))
-
+RawData <- as.data.table(rio::import(
+  "https://kelen.hu/wp-content/uploads/2021/07/sinopharmanonymousdata.xlsx"))
 RawData2 <- RawData
 RawData2[Titer==0]$Titer <- 0.5
 ```
 
 (`RawData2` is only needed for visualization purposes.)
 
-This also serves as a data dictionary, that is, `RawData` has four variables:
+That is, `RawData` has four variables:
 
 - `Age` is the age of the subject, measured in years (greater than or equal to 18 in the present study).
 - `Sex` is the sex of the subject, either Male or Female.
@@ -67,7 +58,6 @@ Distribution of titer according to age:
 
 ```{r}
 ggplot() + geom_jitter(data = RawData2, aes(x = Age, y = Titer), height = 0.05) +
-  geom_smooth(data = RawData, aes(x = Age, y = Titer)) +
   scale_y_log10(breaks = c(0.5, 1, 10, 100), labels = c(0, 1, 10, 100), limits = c(0.4, NA)) +
   labs(x = "Age [year]", y = "Titre [Ci]")
 ```
@@ -76,7 +66,6 @@ Distribution of titer according to time since second dose:
 
 ```{r}
 ggplot() + geom_jitter(data = RawData2, aes(x = DaysAfterSecondDose, y = Titer), height = 0.05) +
-  geom_smooth(data = RawData, aes(x = DaysAfterSecondDose, y = Titer)) +
   scale_y_log10(breaks = c(0.5, 1, 10, 100), labels = c(0, 1, 10, 100), limits = c(0.4, NA)) +
   labs(x = "Time since second dose [day]", y = "Titre [Ci]")
 ```
