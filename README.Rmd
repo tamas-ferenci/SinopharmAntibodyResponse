@@ -1,5 +1,5 @@
 ---
-title: "Virus neutralizing antibody responses after two doses of BBIBP-CorV (Sinopharm, Beijing) vaccine"
+title: "Virus neutralizing antibody responses after two doses of BBIBP-CorV (Sinopharm, Beijing CNBG) vaccine"
 author: "Tamás Ferenci, Balázs Sarkadi"
 output: github_document
 ---
@@ -10,7 +10,7 @@ knitr::opts_chunk$set(echo = TRUE, warning = FALSE, fig.width = 12, dpi = 300)
 
 We first load the necessary libraries:
 
-```{r}
+```{r, message = FALSE}
 library(data.table)
 library(ggplot2)
 library(brms)
@@ -21,7 +21,7 @@ theme_set(theme_bw())
 
 De-identfied individual patient level data are openly available to the public at the homepage of the Kelen Hospital: [Sinopharm](https://kelen.hu/wp-content/uploads/2021/07/sinopharmanonymousdata.xlsx) (450 subjects) and [Pfizer](https://kelen.hu/wp-content/uploads/2021/07/pfizeranonymousdata.xlsx) (45 subjects).
 
-To illustrate the methods, we will use to Sinopharm data. We first read the raw data:
+To illustrate the methods, we will now analyze the Sinopharm measurements. We first read the raw data:
 
 ```{r}
 RawData <- as.data.table(rio::import(
@@ -36,7 +36,7 @@ That is, `RawData` has four variables:
 
 - `Age` is the age of the subject, measured in years (greater than or equal to 18 in the present study).
 - `Sex` is the sex of the subject, either Male or Female.
-- `DaysAfterSecondDose` is the time since the second dose, measured in days (between 14 and 50 days in the present study).
+- `DaysAfterSecondDose` is the time since the second dose, measured in days (greater than or equal to 14 days in the present study).
 - `Titer` is the neutralizing antibody titer measured in Ci (Centaur index) arbitrary unit. Non-negative real number.
 
 ## Univariate investigations

@@ -1,5 +1,5 @@
 Virus neutralizing antibody responses after two doses of BBIBP-CorV
-(Sinopharm, Beijing) vaccine
+(Sinopharm, Beijing CNBG) vaccine
 ================
 Tamás Ferenci, Balázs Sarkadi
 
@@ -9,22 +9,6 @@ We first load the necessary libraries:
 library(data.table)
 library(ggplot2)
 library(brms)
-```
-
-    ## Loading required package: Rcpp
-
-    ## Loading 'brms' package (version 2.15.0). Useful instructions
-    ## can be found by typing help('brms'). A more detailed introduction
-    ## to the package is available through vignette('brms_overview').
-
-    ## 
-    ## Attaching package: 'brms'
-
-    ## The following object is masked from 'package:stats':
-    ## 
-    ##     ar
-
-``` r
 theme_set(theme_bw())
 ```
 
@@ -37,8 +21,8 @@ public at the homepage of the Kelen Hospital:
 [Pfizer](https://kelen.hu/wp-content/uploads/2021/07/pfizeranonymousdata.xlsx)
 (45 subjects).
 
-To illustrate the methods, we will use to Sinopharm data. We first read
-the raw data:
+To illustrate the methods, we will now analyze the Sinopharm
+measurements. We first read the raw data:
 
 ``` r
 RawData <- as.data.table(rio::import(
@@ -55,7 +39,7 @@ That is, `RawData` has four variables:
     equal to 18 in the present study).
 -   `Sex` is the sex of the subject, either Male or Female.
 -   `DaysAfterSecondDose` is the time since the second dose, measured in
-    days (between 14 and 50 days in the present study).
+    days (greater than or equal to 14 days in the present study).
 -   `Titer` is the neutralizing antibody titer measured in Ci (Centaur
     index) arbitrary unit. Non-negative real number.
 
